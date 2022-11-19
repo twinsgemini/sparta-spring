@@ -1,4 +1,4 @@
-package com.sparta.springcore2.intefration;
+package com.sparta.springcore2.integration;
 
 import com.sparta.springcore2.dto.ProductMypriceRequestDto;
 import com.sparta.springcore2.dto.ProductRequestDto;
@@ -12,9 +12,8 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -149,9 +148,13 @@ public class UserProductIntegrationTest {
     void test5() {
         // given
         Long createProductId = createdProduct.getId();
+        int page = 0;
+        int size = 10;
+        String sortBy = "id";
+        boolean isAsc = true;
 
         // when
-        List<Product> productList = productService.getProducts(userId);
+        Page<Product> productList = productService.getProducts(userId, page, size, sortBy, isAsc);
         Product foundProdoct = productList.stream().filter(product -> product.getId().equals(createProductId))
                 .findFirst()
                 .orElse(null);
