@@ -3,6 +3,7 @@ package com.sparta.springcore2.controller;
 import com.sparta.springcore2.dto.ProductMypriceRequestDto;
 import com.sparta.springcore2.dto.ProductRequestDto;
 import com.sparta.springcore2.model.Product;
+import com.sparta.springcore2.model.User;
 import com.sparta.springcore2.model.UserRoleEnum;
 import com.sparta.springcore2.security.UserDetailsImpl;
 import com.sparta.springcore2.service.ProductService;
@@ -72,4 +73,17 @@ public class ProductController {
         page = page -1;
         return productService.getAllProducts(page, size, sortBy, isAsc);
     }
+
+    @PostMapping("api/products/{productId}/folder")
+    public Long addFolder(
+            @PathVariable Long productId,
+            @RequestParam Long folderId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        User user = userDetails.getUser();
+        Product product = productService.addFolder(productId, folderId, user);
+
+        return product.getId();
+    }
+
 }

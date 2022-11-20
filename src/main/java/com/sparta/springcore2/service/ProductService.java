@@ -2,7 +2,10 @@ package com.sparta.springcore2.service;
 
 import com.sparta.springcore2.dto.ProductMypriceRequestDto;
 import com.sparta.springcore2.dto.ProductRequestDto;
+import com.sparta.springcore2.model.Folder;
 import com.sparta.springcore2.model.Product;
+import com.sparta.springcore2.model.User;
+import com.sparta.springcore2.repository.FolderRepository;
 import com.sparta.springcore2.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,11 +21,17 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final FolderRepository folderRepository;
+
     public static final int MIN_MY_PRICE = 100;
 
     @Autowired
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(
+            ProductRepository productRepository,
+            FolderRepository folderRepository
+    ) {
         this.productRepository = productRepository;
+        this.folderRepository = folderRepository;
     }
 
     public Product createProduct(ProductRequestDto requestDto, Long userId ) {
@@ -64,5 +74,23 @@ public class ProductService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         return productRepository.findAll(pageable);
+    }
+
+    @Transactional
+    public Product addFolder(Long productId, Long folderId, User user) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new NullPointerException("상품 아이디가 존재하지 않습니다."));
+
+        Folder folder = folderRepository.findById(folderId)
+                .orElseThrow(() -> new NullPointerException("폴더 아이디가 존재하지 않습니다."));
+
+        Long loginUserId = user.getId();
+        if (!product.getUserId().equals(loginUserId) || !folder.getUser().getId().equals(loginUserId)) {
+            throw new IllegalArgumentException("회원님의 관심상품이 아니거나, 회원님의 폴더가 아닙니다.");
+        }
+
+        product.addFolder(folder);
+
+        return product;
     }
 }
