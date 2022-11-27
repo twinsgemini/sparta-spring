@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,21 +31,27 @@ public class FolderService {
         this.productRepository = productRepository;
     }
 
+    @Transactional
     public List<Folder> addFolders(List<String> folderNames, User user) {
-        List<Folder> folderList = new ArrayList<>();
+        List<Folder> savedFolderList = new ArrayList<>();
 
         for (String folderName : folderNames) {
             Folder existedFolder = folderRepository.findByName(folderName);
 
             if (existedFolder != null) {
-                continue;
+                // Exception 발생!
+                throw new IllegalArgumentException("중복된 폴더명을 제거해 주세요! 폴더명: " + folderName);
+            } else {
+                Folder folder = new Folder(folderName, user);
+                // 폴더명 저장
+                folder = folderRepository.save(folder);
+                savedFolderList.add(folder);
             }
 
-            Folder folder = new Folder(folderName, user);
-            folderList.add(folder);
         }
 
-        return folderRepository.saveAll(folderList);
+//        return folderRepository.saveAll(savedFolderList);
+        return savedFolderList;
     }
 
     public List<Folder> getFolders(User user) {
