@@ -52,9 +52,12 @@ public class UseTimeAop {
                 } else {
 // 로그인 회원의 기록이 이미 있으면
                     apiUseTime.addUseTime(runTime);
+                    apiUseTime.addUseCount();
                 }
 
-                System.out.println("[API Use Time] Username: " + loginUser.getUsername() + ", Total Time: " + apiUseTime.getTotalTime() + " ms");
+                System.out.println("[API Use Time] Username: " + loginUser.getUsername()
+                        + ", Total Time: " + apiUseTime.getTotalTime() + " ms"
+                        + ", Total Count: " + apiUseTime.getTotalCount() + " 회");
                 apiUseTimeRepository.save(apiUseTime);
             }
         }

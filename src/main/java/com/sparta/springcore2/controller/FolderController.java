@@ -2,6 +2,7 @@ package com.sparta.springcore2.controller;
 
 
 import com.sparta.springcore2.dto.FolderRequestDto;
+import com.sparta.springcore2.exception.RestApiException;
 import com.sparta.springcore2.model.Folder;
 import com.sparta.springcore2.model.Product;
 import com.sparta.springcore2.model.User;
@@ -9,6 +10,8 @@ import com.sparta.springcore2.security.UserDetailsImpl;
 import com.sparta.springcore2.service.FolderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,6 +53,6 @@ public class FolderController {
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         page = page - 1;
-        return folderService.getProductInFolder(folderId, page, size, sortBy, isAsc, userDetails.getUser());
+        return folderService.getProductsInFolder(folderId, page, size, sortBy, isAsc, userDetails.getUser());
     }
 }

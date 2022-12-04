@@ -23,12 +23,21 @@ public class ApiUseTime {
     @Column(nullable = false)
     private Long totalTime;
 
+    @Column(nullable = false)
+    private Long totalCount;
+
     public ApiUseTime(User user, long totalTime) {
         this.user = user;
         this.totalTime = totalTime;
+        this.totalCount = 1L;
     }
 
     public void addUseTime(long useTime) {
         this.totalTime += useTime;
     }
+
+    public void addUseCount() {
+        this.totalCount += 1L;
+    }
+
 }
